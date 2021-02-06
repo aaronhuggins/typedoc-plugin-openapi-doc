@@ -102,3 +102,9 @@ dist
 
 # TernJS port file
 .tern-port
+
+# Compiled TypeScript and Typedoc tests
+*.js
+*.js.map
+*.d.ts
+.test-docs

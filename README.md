@@ -1,1 +1,1 @@
-# typedoc-plugin-swagger
+# typedoc-plugin-swagger-doc

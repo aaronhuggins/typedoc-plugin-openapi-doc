@@ -1,0 +1,7 @@
+{
+  "entryPoints": ["./index.ts"],
+  "out": ".test-docs",
+  "plugin": [
+    "../index.js"
+  ]
+}
