@@ -1,22 +1,6 @@
 /* eslint-disable @typescript-eslint/strict-boolean-expressions */
 import { JSDOM } from 'jsdom'
 
-export interface FormatterOptions {
-  showArrayIndex?: boolean
-  bool?: {
-    text?: {
-      true: string
-      false: string
-    }
-    img?: {
-      true: string
-      false: string
-    }
-    showImage?: boolean
-    showText?: boolean
-  }
-}
-
 const { document } = new JSDOM('').window
 
 function makePrefixer (prefix: string): (name: string) => string {
@@ -40,7 +24,6 @@ const STRING_EMPTY_CLASS_NAME = p('type-string') + ' ' + p('empty')
 
 const BOOL_TRUE_CLASS_NAME = p('type-bool-true')
 const BOOL_FALSE_CLASS_NAME = p('type-bool-false')
-const BOOL_IMAGE = p('type-bool-image')
 const INT_CLASS_NAME = p('type-int') + ' ' + p('type-number')
 const FLOAT_CLASS_NAME = p('type-float') + ' ' + p('type-number')
 
@@ -48,8 +31,6 @@ const OBJECT_CLASS_NAME = p('type-object')
 const OBJ_KEY_CLASS_NAME = p('key') + ' ' + p('object-key')
 const OBJ_VAL_CLASS_NAME = p('value') + ' ' + p('object-value')
 const OBJ_EMPTY_CLASS_NAME = p('type-object') + ' ' + p('empty')
-
-const FUNCTION_CLASS_NAME = p('type-function')
 
 const ARRAY_KEY_CLASS_NAME = p('key') + ' ' + p('array-key')
 const ARRAY_VAL_CLASS_NAME = p('value') + ' ' + p('array-value')
@@ -106,7 +87,7 @@ function getType (obj: any): number {
   }
 }
 
-function _format (data: any, options: FormatterOptions, parentKey?: number | string): HTMLElement {
+function _format (data: any): HTMLElement {
   let result: HTMLElement
   let container: HTMLElement
   let key: number | string
@@ -138,7 +119,7 @@ function _format (data: any, options: FormatterOptions, parentKey?: number | str
           continue
         }
 
-        valNode = _format(value, options, key)
+        valNode = _format(value)
 
         keyNode = setNode('th', OBJ_KEY_CLASS_NAME, key)
         valNode = setChildNode('td', OBJ_VAL_CLASS_NAME, valNode)
@@ -159,19 +140,13 @@ function _format (data: any, options: FormatterOptions, parentKey?: number | str
     case ARRAY:
       if (data.length > 0) {
         childs = []
-        var showArrayIndices = options.showArrayIndex
 
         for (key = 0, len = data.length; key < len; key += 1) {
           keyNode = setNode('th', ARRAY_KEY_CLASS_NAME, key)
           value = data[key]
 
-          valNode = setChildNode('td', ARRAY_VAL_CLASS_NAME, _format(value, options, key))
-
+          valNode = setChildNode('td', ARRAY_VAL_CLASS_NAME, _format(value))
           tr = document.createElement('tr')
-
-          if (showArrayIndices) {
-            tr.appendChild(keyNode)
-          }
           tr.appendChild(valNode)
 
           childs.push(tr)
@@ -183,25 +158,13 @@ function _format (data: any, options: FormatterOptions, parentKey?: number | str
       }
       break
     case BOOL:
-      var boolOpt = options.bool
       container = document.createElement('div')
 
-      if (boolOpt.showImage) {
-        var img = document.createElement('img')
-        img.setAttribute('class', BOOL_IMAGE)
-
-        img.setAttribute('src',
-          `${typeof data === 'boolean' && data ? boolOpt.img.true : boolOpt.img.false}`
-        )
-
-        container.appendChild(img)
-      }
-
-      if (boolOpt.showText) {
-        container.appendChild(data
-          ? setNode('span', BOOL_TRUE_CLASS_NAME, boolOpt.text.true)
-          : setNode('span', BOOL_FALSE_CLASS_NAME, boolOpt.text.false))
-      }
+      container.appendChild(
+        typeof data === 'boolean' && data
+          ? setNode('span', BOOL_TRUE_CLASS_NAME, 'true')
+          : setNode('span', BOOL_FALSE_CLASS_NAME, 'false')
+      )
 
       result = container
       break
@@ -218,7 +181,6 @@ function _format (data: any, options: FormatterOptions, parentKey?: number | str
     case FLOAT:
       result = setNode('span', FLOAT_CLASS_NAME, data)
       break
-      break
     default:
       result = setNode('span', UNKNOWN_CLASS_NAME, data)
       break
@@ -228,22 +190,7 @@ function _format (data: any, options: FormatterOptions, parentKey?: number | str
 }
 
 export function format (data: any): string {
-  const options: FormatterOptions = {
-    showArrayIndex: false,
-    bool: {
-      text: {
-        true: 'true',
-        false: 'false'
-      },
-      img: {
-        true: '',
-        false: ''
-      },
-      showImage: false,
-      showText: true
-    }
-  }
-  const result = _format(data, options)
+  const result = _format(data)
   result.className = result.className + ' ' + prefixer('root')
 
   return result.outerHTML

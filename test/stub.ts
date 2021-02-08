@@ -67,7 +67,7 @@ export function myStub2 (): void {}
  * @swagger
  * /myStub3:
  *   post:
- *     tags: [Webhooks]
+ *     tags: [Webhooks, 2, 3.1]
  *     operationId: subscribe
  *     description: When subscribing to a webhook, the `subscribe` endpoint expects
  *       to call the URL as a test to see if it receives a HTTP 200 response and an
@@ -81,19 +81,7 @@ export function myStub2 (): void {}
  *         application/json:
  *           schema:
  *             $ref: '#/components/schemas/SubscriptionRequest'
- *     responses:
- *       '200':
- *         description: OK
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/SubscriptionRequest'
- *       '400':
- *         description: Bad Request
- *       '412':
- *         description: Conflict - cannot connect to receiver URL
- *       '500':
- *         description: Server error
+ *     responses: {}
  */
 export function myStub3 (): void {}
 
@@ -102,17 +90,17 @@ export function myStub3 (): void {}
  * /myStub4:
  *   description: When this description is filled in, this should also be hoisted.
  *   post:
- *     tags: [Webhooks]
+ *     tags: []
  *     operationId: subscribe
  *     requestBody:
- *       required: true
+ *       required: false
  *       content:
  *         application/json:
  *           schema:
  *             $ref: '#/components/schemas/SubscriptionRequest'
  *     responses:
  *       '200':
- *         description: OK
+ *         description: ''
  *         content:
  *           application/json:
  *             schema:
