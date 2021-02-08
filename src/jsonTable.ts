@@ -66,6 +66,7 @@ function setChildNode (tagName: string, className: string, child: HTMLElement | 
   return result
 }
 
+/** Gets the underlying type of values encountered during formatting. */
 function getType (obj: any): number {
   const type = typeof obj
 
@@ -87,6 +88,7 @@ function getType (obj: any): number {
   }
 }
 
+/** Turns a JS Object into an HTML tree table. */
 function _format (data: any): HTMLElement {
   let result: HTMLElement
   let container: HTMLElement
@@ -189,6 +191,7 @@ function _format (data: any): HTMLElement {
   return result
 }
 
+/** Entry point for JS Object to HTML formatter. */
 export function format (data: any): string {
   const result = _format(data)
   result.className = result.className + ' ' + prefixer('root')

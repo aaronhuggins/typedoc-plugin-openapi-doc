@@ -3,6 +3,7 @@ import { DEFAULT_OPTIONS, PLUGIN_NAME } from './constants'
 import { OpenApiDocOpts } from './interfaces'
 import { OpenApiDocPlugin } from './OpenApiDocPlugin'
 
+/** The function which TypeDoc looks for when loading plugins. */
 export function load (host: PluginHost): void {
   const app = host.owner
 
@@ -11,14 +12,15 @@ export function load (host: PluginHost): void {
     help: '',
     type: ParameterType.Mixed,
     defaultValue: DEFAULT_OPTIONS,
-    validate(value: OpenApiDocOpts) {
+    validate (value: OpenApiDocOpts) {
       if (typeof value !== 'object') throw new Error(`${PLUGIN_NAME} must be one of object.`)
 
-      const evaluate = (prop: string, types: string[]) => {
+      const evaluate = (prop: string, types: string[]): void => {
         if (prop in value) {
           let error = true
 
           for (const type of types) {
+            // eslint-disable-next-line valid-typeof
             if (typeof value[prop] === type) error = false
           }
 
