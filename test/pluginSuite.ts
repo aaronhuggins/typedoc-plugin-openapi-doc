@@ -1,7 +1,9 @@
 import * as TypeDoc from 'typedoc'
 import { Logger } from 'typedoc/dist/lib/utils/loggers'
 import { doesNotThrow, strictEqual } from 'assert'
-import { load } from '../index'
+import { load, OpenApiDocPlugin } from '../index'
+import { format } from '../src/jsonTable'
+import { DUMMY_APPLICATION_OWNER } from 'typedoc/dist/lib/utils/component'
 
 describe('Module typedoc-plugin-openapi-doc', () => {
   it('should load into TypeDoc without error', function () {
@@ -64,12 +66,27 @@ describe('Module typedoc-plugin-openapi-doc', () => {
     app.bootstrap({
       entryPoints: ['test/stub.ts'],
       'openapi-doc': {
-        yaml2Html: false
+        yaml2Html: false,
+        renameTag: 'OpenAPI'
       }
     } as any)
 
     const project = app.convert()
 
     strictEqual(project instanceof TypeDoc.ProjectReflection, true)
+  })
+
+  it('should handle unknown type in yaml/json input', function () {
+    doesNotThrow(() => {
+      format({ unkown: () => {} })
+    })
+  })
+
+  it('should handle errors in options', function () {
+    const instance: any = new OpenApiDocPlugin(DUMMY_APPLICATION_OWNER)
+
+    doesNotThrow(() => {
+      instance.ensureOptions()
+    })
   })
 })
