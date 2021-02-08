@@ -13,7 +13,7 @@ describe('Module typedoc-plugin-openapi-doc', () => {
 
     app.options.addReader(new TypeDoc.TSConfigReader())
     app.bootstrap({
-      entryPoints: ["test/stub.ts"]
+      entryPoints: ['test/stub.ts']
     } as any)
 
     const project = app.convert()

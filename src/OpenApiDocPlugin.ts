@@ -11,7 +11,7 @@ import { OpenApiDocOpts, OpenApiOperation, OpenApiOps, OpenApiPath } from './int
 @Component({ name: PLUGIN_NAME })
 export class OpenApiDocPlugin extends ConverterComponent {
   private generatedComment: string
-  private options: OpenApiDocOpts
+  private options: Required<OpenApiDocOpts>
   private marked: MarkedPlugin
 
   initialize (): void {
@@ -77,6 +77,7 @@ export class OpenApiDocPlugin extends ConverterComponent {
             const openApiOp: OpenApiOperation = typeof operations[0] === 'undefined' ? {} : operations[0].metadata
 
             switch (true) {
+              /* eslint-disable no-fallthrough */
               case 'summary' in openApiPath:
                 reflection.comment.shortText = openApiPath.summary
               case 'description' in openApiPath:
@@ -125,6 +126,7 @@ export class OpenApiDocPlugin extends ConverterComponent {
   }
 
   private renderYaml2Html (pathName: string, operations: OpenApiOps): string {
+    /* eslint-disable @typescript-eslint/restrict-template-expressions */
     const htmlDescription: string[] = []
 
     htmlDescription.push('<div>')

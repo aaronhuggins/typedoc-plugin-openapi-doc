@@ -31,4 +31,4 @@
  *       '500':
  *         description: Server error
  */
-export function myStub () {}
+export function myStub (): void {}
