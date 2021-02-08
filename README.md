@@ -33,3 +33,7 @@ The result is this plugin, to reduce copypasta of descriptive information and to
 - [Project to OpenAPI](https://github.com/ahuggins-nhs/project-to-openapi) uses `@swagger` comments.
 - [Swagger JSDoc](https://github.com/Surnet/swagger-jsdoc) uses `@swagger` for its notation.
 - [OpenAPI JSDoc](https://github.com/asznee7/openapi-jsdoc) uses `@openapi`.
+
+# Code documentation
+
+Found [here](https://ahuggins-nhs.github.io/typedoc-plugin-openapi-doc/).
