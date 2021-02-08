@@ -33,8 +33,6 @@ const INT = 8
 const FLOAT = 16
 const STRING = 32
 const OBJECT = 64
-const SPECIAL_OBJECT = 128
-const FUNCTION = 256
 const UNK = 1
 
 const STRING_CLASS_NAME = p('type-string')
@@ -60,8 +58,6 @@ const ARRAY_EMPTY_CLASS_NAME = p('type-array') + ' ' + p('empty')
 
 const UNKNOWN_CLASS_NAME = p('type-unk')
 
-const isArray = Array.isArray
-
 /** Create and set a node for a piece of data. */
 function setNode (tagName: string, className: string, data: string | number): HTMLElement {
   const result = document.createElement(tagName)
@@ -78,7 +74,7 @@ function setChildNode (tagName: string, className: string, child: HTMLElement | 
 
   result.className = className
 
-  if (isArray(child)) {
+  if (Array.isArray(child)) {
     for (let i = 0, len = child.length; i < len; i += 1) {
       result.appendChild(child[i])
     }
@@ -99,17 +95,11 @@ function getType (obj: any): number {
       return STRING
     case 'number':
       return (obj % 1 === 0) ? INT : FLOAT
-    case 'function':
-      return FUNCTION
     default:
-      if (isArray(obj)) {
+      if (Array.isArray(obj)) {
         return ARRAY
-      } else if (obj === Object(obj)) {
-        if (obj.constructor === Object) {
-          return OBJECT
-        }
-
-        return OBJECT | SPECIAL_OBJECT
+      } else if (typeof obj === 'object' && obj !== null) {
+        return OBJECT
       } else {
         return UNK
       }
@@ -127,14 +117,10 @@ function _format (data: any, options: FormatterOptions, parentKey?: number | str
   let tr: HTMLElement
   let value: any
   let isEmpty = true
-  let isSpecial = false
   const type = getType(data)
 
   switch (type) {
     case OBJECT:
-      if (type & SPECIAL_OBJECT) {
-        isSpecial = true
-      }
       childs = []
 
       for (key in data) {
@@ -164,9 +150,7 @@ function _format (data: any, options: FormatterOptions, parentKey?: number | str
         childs.push(tr)
       }
 
-      if (isSpecial) {
-        result = setNode('span', STRING_CLASS_NAME, data.toString())
-      } else if (isEmpty) {
+      if (isEmpty) {
         result = setNode('span', OBJ_EMPTY_CLASS_NAME, '(Empty Object)')
       } else {
         result = setChildNode('table', OBJECT_CLASS_NAME, setChildNode('tbody', '', childs))
@@ -234,8 +218,6 @@ function _format (data: any, options: FormatterOptions, parentKey?: number | str
     case FLOAT:
       result = setNode('span', FLOAT_CLASS_NAME, data)
       break
-    case FUNCTION:
-      result = setNode('span', FUNCTION_CLASS_NAME, data)
       break
     default:
       result = setNode('span', UNKNOWN_CLASS_NAME, data)
