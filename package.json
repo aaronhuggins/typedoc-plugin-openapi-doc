@@ -11,8 +11,16 @@
     "tsdoc"
   ],
   "main": "index.js",
+  "types": "index.d.ts",
+  "files": [
+    "index.js",
+    "index.d.ts",
+    "src/**/*.js",
+    "src/**/*.d.ts"
+  ],
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "prepack": "tsc",
+    "test": "nyc mocha"
   },
   "repository": {
     "type": "git",
