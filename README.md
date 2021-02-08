@@ -10,6 +10,8 @@ Install via npm; requires a peer of TypeDoc 0.20.20 or above.
 npm install --save-dev typedoc typedoc-plugin-openapi-doc
 ```
 
+This plugin automatically detects the typedoc plugin for [markdown](https://github.com/tgreyuk/typedoc-plugin-markdown/tree/master/packages/typedoc-plugin-markdown) and will skip generating CSS styles for collapsible content.
+
 # TypeDoc options
 
 The following options may be defined in a typedoc config. However, all of the options default to true and it is not required that they are provided.

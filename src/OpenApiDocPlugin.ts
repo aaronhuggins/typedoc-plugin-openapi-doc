@@ -5,7 +5,7 @@ import { Context } from 'typedoc/dist/lib/converter/context'
 import { MarkedPlugin } from 'typedoc/dist/lib/output/plugins/MarkedPlugin'
 import * as YAML from 'js-yaml'
 import { format } from './jsonTable'
-import { DEFAULT_OPTIONS, PLUGIN_NAME, SUPPORTED_METHODS } from './constants'
+import { DEFAULT_OPTIONS, PLUGIN_NAME, SUPPORTED_MARKDOWN, SUPPORTED_METHODS } from './constants'
 import { OpenApiDocOpts, OpenApiOperation, OpenApiOps, OpenApiPath } from './interfaces'
 import { DUMMY_APPLICATION_OWNER } from 'typedoc/dist/lib/utils/component'
 
@@ -17,8 +17,10 @@ export class OpenApiDocPlugin extends ConverterComponent {
 
     this.marked = new MarkedPlugin(this.application.renderer)
     this.generatedComment = '<!-- Generated from @openapi --><br>'
+    this.skipCssStyle = false
   }
 
+  private skipCssStyle: boolean
   private readonly generatedComment: string
   private options: Required<OpenApiDocOpts>
   private readonly marked: MarkedPlugin
@@ -48,6 +50,19 @@ export class OpenApiDocPlugin extends ConverterComponent {
 
       if (typeof this.options.renameTag === 'boolean' && this.options.renameTag) {
         this.options.renameTag = 'openapi'
+      }
+    }
+
+    for (const plugin of SUPPORTED_MARKDOWN) {
+      if (
+        typeof this.owner === 'object' &&
+        typeof this.owner.application === 'object' &&
+        typeof this.owner.application.converter === 'object' &&
+        typeof this.owner.application.converter.hasComponent === 'function' &&
+        this.owner.application.converter.hasComponent(plugin)
+      ) {
+        this.skipCssStyle = true
+        break
       }
     }
   }
@@ -149,14 +164,17 @@ export class OpenApiDocPlugin extends ConverterComponent {
     htmlDescription.push('<div>')
 
     for (const item of operations) {
-      htmlDescription.push('<style>')
-      htmlDescription.push(`label.for-${item.method}{cursor:pointer;}`)
-      htmlDescription.push(`label.for-${item.method}:before{content:'\\FF0B';font-size:24px;font-weight:bold;margin-right:2px;color:black;float:left;}`)
-      htmlDescription.push(`input[type=checkbox]#toggle-${item.method}:checked ~ label.for-${item.method}:before{content:'\\FF0D';}`)
-      htmlDescription.push(`input[type=checkbox]#toggle-${item.method}{position:absolute;top:0;left:0;width:1px;height:1px;opacity:0;}`)
-      htmlDescription.push(`.control-${item.method}{max-height:0;overflow:hidden;transition:max-height 0.4s ease;}`)
-      htmlDescription.push(`input[type=checkbox]#toggle-${item.method}:checked ~ .control-${item.method}{max-height:unset;}`)
-      htmlDescription.push('</style>')
+      if (!this.skipCssStyle) {
+        htmlDescription.push('<style>')
+        htmlDescription.push(`label.for-${item.method}{cursor:pointer;}`)
+        htmlDescription.push(`label.for-${item.method}:before{content:'\\FF0B';font-size:24px;font-weight:bold;margin-right:2px;color:black;float:left;}`)
+        htmlDescription.push(`input[type=checkbox]#toggle-${item.method}:checked ~ label.for-${item.method}:before{content:'\\FF0D';}`)
+        htmlDescription.push(`input[type=checkbox]#toggle-${item.method}{position:absolute;top:0;left:0;width:1px;height:1px;opacity:0;}`)
+        htmlDescription.push(`.control-${item.method}{max-height:0;overflow:hidden;transition:max-height 0.4s ease;}`)
+        htmlDescription.push(`input[type=checkbox]#toggle-${item.method}:checked ~ .control-${item.method}{max-height:unset;}`)
+        htmlDescription.push('</style>')
+      }
+
       htmlDescription.push(`<input type="checkbox" id="toggle-${item.method}">`)
       htmlDescription.push(`<label class="for-${item.method}" for="toggle-${item.method}">`)
       htmlDescription.push(`<h3>${item.method.toUpperCase()} <code>${pathName}</code></h3>`)

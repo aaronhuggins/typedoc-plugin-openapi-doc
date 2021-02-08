@@ -8,6 +8,5 @@
     "sourceMap": true,
     "strict": false,
     "experimentalDecorators": true
-  },
-  "include": ["*","test/*", "."]
+  }
 }

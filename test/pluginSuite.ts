@@ -5,9 +5,12 @@ import { load, OpenApiDocPlugin } from '../index'
 import { format } from '../src/jsonTable'
 import { DUMMY_APPLICATION_OWNER } from 'typedoc/dist/lib/utils/component'
 
+const reader = new TypeDoc.TSConfigReader()
+
 describe('Module typedoc-plugin-openapi-doc', () => {
   it('should load into TypeDoc without error', function () {
     const app = new TypeDoc.Application()
+    app.logger = new Logger()
 
     doesNotThrow(() => {
       load(app.plugins)
@@ -20,11 +23,7 @@ describe('Module typedoc-plugin-openapi-doc', () => {
     app.logger = new Logger()
 
     load(app.plugins)
-    app.options.addReader(new TypeDoc.TSConfigReader())
-    app.bootstrap({
-      entryPoints: ['test/stub.ts'],
-      'openapi-doc': true
-    } as any)
+    app.options.addReader(reader)
     app.bootstrap({
       entryPoints: ['test/stub.ts'],
       'openapi-doc': {
@@ -44,11 +43,14 @@ describe('Module typedoc-plugin-openapi-doc', () => {
 
     load(app.plugins)
 
-    app.options.addReader(new TypeDoc.TSConfigReader())
+    app.options.addReader(reader)
     app.bootstrap({
       entryPoints: ['test/stub.ts'],
-      'openapi-doc': {}
+      'openapi-doc': true
     } as any)
+
+    // Forcefully remove markdown to follow other path with CSS styles.
+    app.converter.removeComponent('markdown')
 
     const project = app.convert()
 
@@ -62,7 +64,7 @@ describe('Module typedoc-plugin-openapi-doc', () => {
 
     load(app.plugins)
 
-    app.options.addReader(new TypeDoc.TSConfigReader())
+    app.options.addReader(reader)
     app.bootstrap({
       entryPoints: ['test/stub.ts'],
       'openapi-doc': {

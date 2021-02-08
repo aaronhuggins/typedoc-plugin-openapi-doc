@@ -12,3 +12,6 @@ export const DEFAULT_OPTIONS: Required<OpenApiDocOpts> = {
 
 /** OpenAPI supported methods. */
 export const SUPPORTED_METHODS = ['get', 'post', 'put', 'patch', 'delete', 'head', 'options', 'trace']
+
+/** Supported markdown plugins for detection to exclude CSS styles. */
+export const SUPPORTED_MARKDOWN = ['markdown']
