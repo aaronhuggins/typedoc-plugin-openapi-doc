@@ -3,11 +3,6 @@ import { JSDOM } from 'jsdom'
 
 export interface FormatterOptions {
   showArrayIndex?: boolean
-  hyperlinks?: {
-    enable: boolean
-    keys: any[]
-    target: string
-  }
   bool?: {
     text?: {
       true: string
@@ -63,10 +58,8 @@ const ARRAY_VAL_CLASS_NAME = p('value') + ' ' + p('array-value')
 const ARRAY_CLASS_NAME = p('type-array')
 const ARRAY_EMPTY_CLASS_NAME = p('type-array') + ' ' + p('empty')
 
-const HYPERLINK_CLASS_NAME = p('a')
 const UNKNOWN_CLASS_NAME = p('type-unk')
 
-const indexOf = [].indexOf
 const isArray = Array.isArray
 
 /** Create and set a node for a piece of data. */
@@ -94,15 +87,6 @@ function setChildNode (tagName: string, className: string, child: HTMLElement | 
   }
 
   return result
-}
-
-function linkNode (child: HTMLElement, href: string, target: string): HTMLElement {
-  const a = setChildNode('a', HYPERLINK_CLASS_NAME, child)
-
-  a.setAttribute('href', href)
-  a.setAttribute('target', target)
-
-  return a
 }
 
 function getType (obj: any): number {
@@ -145,10 +129,6 @@ function _format (data: any, options: FormatterOptions, parentKey?: number | str
   let isEmpty = true
   let isSpecial = false
   const type = getType(data)
-  // Initialized & used only in case of objects & arrays
-  let hyperlinksEnabled
-  let aTarget
-  let hyperlinkKeys
 
   switch (type) {
     case OBJECT:
@@ -156,15 +136,6 @@ function _format (data: any, options: FormatterOptions, parentKey?: number | str
         isSpecial = true
       }
       childs = []
-
-      aTarget = options.hyperlinks.target
-      hyperlinkKeys = options.hyperlinks.keys
-
-      // Is Hyperlink Key
-      hyperlinksEnabled =
-          options.hyperlinks.enable &&
-          hyperlinkKeys &&
-          hyperlinkKeys.length > 0
 
       for (key in data) {
         isEmpty = false
@@ -182,15 +153,9 @@ function _format (data: any, options: FormatterOptions, parentKey?: number | str
         }
 
         valNode = _format(value, options, key)
-        keyNode = setNode('th', OBJ_KEY_CLASS_NAME, key)
 
-        if (hyperlinksEnabled &&
-            typeof (value) === 'string' &&
-            indexOf.call(hyperlinkKeys, key) >= 0) {
-          valNode = setChildNode('td', OBJ_VAL_CLASS_NAME, linkNode(valNode, value, aTarget))
-        } else {
-          valNode = setChildNode('td', OBJ_VAL_CLASS_NAME, valNode)
-        }
+        keyNode = setNode('th', OBJ_KEY_CLASS_NAME, key)
+        valNode = setChildNode('td', OBJ_VAL_CLASS_NAME, valNode)
 
         tr = document.createElement('tr')
         tr.appendChild(keyNode)
@@ -212,27 +177,11 @@ function _format (data: any, options: FormatterOptions, parentKey?: number | str
         childs = []
         var showArrayIndices = options.showArrayIndex
 
-        aTarget = options.hyperlinks.target
-        hyperlinkKeys = options.hyperlinks.keys
-
-        // Hyperlink of arrays?
-        hyperlinksEnabled = parentKey && options.hyperlinks.enable &&
-            hyperlinkKeys &&
-            hyperlinkKeys.length > 0 &&
-            indexOf.call(hyperlinkKeys, parentKey) >= 0
-
         for (key = 0, len = data.length; key < len; key += 1) {
           keyNode = setNode('th', ARRAY_KEY_CLASS_NAME, key)
           value = data[key]
 
-          if (hyperlinksEnabled && typeof (value) === 'string') {
-            valNode = _format(value, options, key)
-            valNode = setChildNode('td', ARRAY_VAL_CLASS_NAME,
-              linkNode(valNode, value, aTarget))
-          } else {
-            valNode = setChildNode('td', ARRAY_VAL_CLASS_NAME,
-              _format(value, options, key))
-          }
+          valNode = setChildNode('td', ARRAY_VAL_CLASS_NAME, _format(value, options, key))
 
           tr = document.createElement('tr')
 
@@ -299,11 +248,6 @@ function _format (data: any, options: FormatterOptions, parentKey?: number | str
 export function format (data: any): string {
   const options: FormatterOptions = {
     showArrayIndex: false,
-    hyperlinks: {
-      enable: false,
-      keys: [],
-      target: ''
-    },
     bool: {
       text: {
         true: 'true',
