@@ -170,6 +170,16 @@ function _format(data: any, options: any, parentKey?: number | string): HTMLElem
 
         value = data[key];
 
+        if (key === 'schema' && typeof value === 'object') {
+          tr = document.createElement("tr");
+          keyNode = setNode("h4", OBJ_KEY_CLASS_NAME, 'Schema');
+          valNode = setNode('pre', STRING_CLASS_NAME, JSON.stringify(value, null, 2))
+          tr.appendChild(keyNode);
+          tr.appendChild(valNode);
+          childs.push(tr);
+          continue
+        }
+
         valNode = _format(value, options, key);
         keyNode = setNode("th", OBJ_KEY_CLASS_NAME, key);
 
