@@ -1,6 +1,6 @@
 {
   "name": "typedoc-plugin-openapi-doc",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "A typedoc plugin for ingesting jsdoc @swagger or @openapi comments as documentation",
   "keywords": [
     "typedocplugin",
