@@ -1,6 +1,6 @@
 /**
  * @swagger
- * /myStub:
+ * /myStub1:
  *   post:
  *     tags: [Webhooks]
  *     operationId: subscribe
@@ -31,4 +31,34 @@
  *       '500':
  *         description: Server error
  */
-export function myStub (): void {}
+export function myStub1 (): void {}
+
+/**
+ * @swagger
+ * /myStub2:
+ *   summary: This summary should be hoisted.
+ *   description: When this description is filled in, this should also be hoisted.
+ *   post:
+ *     tags: [Webhooks]
+ *     operationId: subscribe
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/SubscriptionRequest'
+ *     responses:
+ *       '200':
+ *         description: OK
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/SubscriptionRequest'
+ *       '400':
+ *         description: Bad Request
+ *       '412':
+ *         description: Conflict - cannot connect to receiver URL
+ *       '500':
+ *         description: Server error
+ */
+export function myStub2 (): void {}
