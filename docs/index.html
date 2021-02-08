@@ -1,0 +1,153 @@
+<!doctype html>
+<html class="default no-js">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>typedoc-plugin-openapi-doc</title>
+	<meta name="description" content="Documentation for typedoc-plugin-openapi-doc">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="assets/css/main.css">
+	<script async src="assets/js/search.js" id="search-script"></script>
+</head>
+<body>
+<header>
+	<div class="tsd-page-toolbar">
+		<div class="container">
+			<div class="table-wrap">
+				<div class="table-cell" id="tsd-search" data-index="assets/js/search.json" data-base=".">
+					<div class="field">
+						<label for="tsd-search-field" class="tsd-widget search no-caption">Search</label>
+						<input id="tsd-search-field" type="text" />
+					</div>
+					<ul class="results">
+						<li class="state loading">Preparing search index...</li>
+						<li class="state failure">The search index is not available</li>
+					</ul>
+					<a href="index.html" class="title">typedoc-plugin-openapi-doc</a>
+				</div>
+				<div class="table-cell" id="tsd-widgets">
+					<div id="tsd-filter">
+						<a href="#" class="tsd-widget options no-caption" data-toggle="options">Options</a>
+						<div class="tsd-filter-group">
+							<div class="tsd-select" id="tsd-filter-visibility">
+								<span class="tsd-select-label">All</span>
+								<ul class="tsd-select-list">
+									<li data-value="public">Public</li>
+									<li data-value="protected">Public/Protected</li>
+									<li data-value="private" class="selected">All</li>
+								</ul>
+							</div>
+							<input type="checkbox" id="tsd-filter-inherited" checked />
+							<label class="tsd-widget" for="tsd-filter-inherited">Inherited</label>
+							<input type="checkbox" id="tsd-filter-externals" checked />
+							<label class="tsd-widget" for="tsd-filter-externals">Externals</label>
+						</div>
+					</div>
+					<a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="tsd-page-title">
+		<div class="container">
+			<h1>typedoc-plugin-openapi-doc</h1>
+		</div>
+	</div>
+</header>
+<div class="container container-main">
+	<div class="row">
+		<div class="col-8 col-content">
+			<div class="tsd-panel tsd-typography">
+				<a href="#typedoc-plugin-openapi-doc" id="typedoc-plugin-openapi-doc" style="color: inherit; text-decoration: none;">
+					<h1>typedoc-plugin-openapi-doc</h1>
+				</a>
+				<p>A typedoc plugin for ingesting jsdoc @swagger or @openapi comments as documentation.</p>
+				<a href="#installation-and-use" id="installation-and-use" style="color: inherit; text-decoration: none;">
+					<h1>Installation and use</h1>
+				</a>
+				<p>Install via npm; requires a peer of TypeDoc 0.20.20 or above.</p>
+				<pre><code class="language-shell"><span style="color: #000000">npm install --save-dev typedoc typedoc-plugin-openapi-doc</span>
+</code></pre>
+				<a href="#typedoc-options" id="typedoc-options" style="color: inherit; text-decoration: none;">
+					<h1>TypeDoc options</h1>
+				</a>
+				<p>The following options may be defined in a typedoc config. However, all of the options default to true and it is not required that they are provided.</p>
+				<pre><code class="language-json"><span style="color: #000000">  </span><span style="color: #A31515">&quot;openapi-doc&quot;</span><span style="color: #000000">: {</span>
+<span style="color: #000000">    </span><span style="color: #0451A5">&quot;hoistDescription&quot;</span><span style="color: #000000">: </span><span style="color: #0000FF">true</span><span style="color: #000000">,</span>
+<span style="color: #000000">    </span><span style="color: #0451A5">&quot;yaml2Html&quot;</span><span style="color: #000000">: </span><span style="color: #0000FF">false</span><span style="color: #000000">,</span>
+<span style="color: #000000">    </span><span style="color: #0451A5">&quot;renameTag&quot;</span><span style="color: #000000">: </span><span style="color: #A31515">&quot;MyNewTagName&quot;</span>
+<span style="color: #000000">  }</span>
+</code></pre>
+				<a href="#why" id="why" style="color: inherit; text-decoration: none;">
+					<h1>Why</h1>
+				</a>
+				<p>The rendering of <code>@swagger</code> JSDoc tags was ugly to the point of being useless in TypeDoc, which meant ignoring these tags. Additionally, such a comment tag often included additional information that would have to be repeated when writing description documentation for TypeDoc to consume.</p>
+				<p>The result is this plugin, to reduce copypasta of descriptive information and to render OpenAPI metadata in a more human-readable way.</p>
+				<a href="#other-tools-which-ingest-swaggeropenapi-comments" id="other-tools-which-ingest-swaggeropenapi-comments" style="color: inherit; text-decoration: none;">
+					<h1>Other tools which ingest @swagger/@openapi comments</h1>
+				</a>
+				<ul>
+					<li><a href="https://github.com/ahuggins-nhs/project-to-openapi">Project to OpenAPI</a> uses <code>@swagger</code> comments.</li>
+					<li><a href="https://github.com/Surnet/swagger-jsdoc">Swagger JSDoc</a> uses <code>@swagger</code> for its notation.</li>
+					<li><a href="https://github.com/asznee7/openapi-jsdoc">OpenAPI JSDoc</a> uses <code>@openapi</code>.</li>
+				</ul>
+			</div>
+		</div>
+		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
+			<nav class="tsd-navigation primary">
+				<ul>
+					<li class=" ">
+						<a href="modules.html">Exports</a>
+					</li>
+				</ul>
+			</nav>
+			<nav class="tsd-navigation secondary menu-sticky">
+				<ul class="before-current">
+					<li class=" tsd-kind-class">
+						<a href="classes/openapidocplugin.html" class="tsd-kind-icon">Open<wbr>Api<wbr>Doc<wbr>Plugin</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/openapidocopts.html" class="tsd-kind-icon">Open<wbr>Api<wbr>Doc<wbr>Opts</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/openapioperation.html" class="tsd-kind-icon">Open<wbr>Api<wbr>Operation</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/openapipath.html" class="tsd-kind-icon">Open<wbr>Api<wbr>Path</a>
+					</li>
+					<li class=" tsd-kind-type-alias">
+						<a href="modules.html#openapiops" class="tsd-kind-icon">Open<wbr>Api<wbr>Ops</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="modules.html#load" class="tsd-kind-icon">load</a>
+					</li>
+				</ul>
+			</nav>
+		</div>
+	</div>
+</div>
+<footer class="with-border-bottom">
+	<div class="container">
+		<h2>Legend</h2>
+		<div class="tsd-legend-group">
+			<ul class="tsd-legend">
+				<li class="tsd-kind-constructor tsd-parent-kind-class"><span class="tsd-kind-icon">Constructor</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class"><span class="tsd-kind-icon">Method</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private method</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-interface"><span class="tsd-kind-icon">Property</span></li>
+			</ul>
+		</div>
+	</div>
+</footer>
+<div class="container tsd-generator">
+	<p>Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p>
+</div>
+<div class="overlay"></div>
+<script src="assets/js/main.js"></script>
+</body>
+</html>
