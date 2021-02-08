@@ -1,1 +1,1 @@
-# typedoc-plugin-swagger-doc
+# typedoc-plugin-openapi-doc

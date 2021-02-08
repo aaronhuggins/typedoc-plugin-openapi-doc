@@ -1,10 +1,14 @@
 {
-  "name": "typedoc-plugin-swagger-doc",
+  "name": "typedoc-plugin-openapi-doc",
   "version": "0.0.0",
-  "description": "A typedoc plugin for ingesting jsdoc @swagger comments as documentation",
+  "description": "A typedoc plugin for ingesting jsdoc @swagger or @openapi comments as documentation",
   "keywords": [
     "typedocplugin",
-    "typedoc"
+    "typedoc",
+    "swagger",
+    "openapi",
+    "jsdoc",
+    "tsdoc"
   ],
   "main": "index.js",
   "scripts": {
@@ -12,14 +16,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ahuggins-nhs/typedoc-plugin-swagger.git"
+    "url": "git+https://github.com/ahuggins-nhs/typedoc-plugin-openapi.git"
   },
   "author": "",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/ahuggins-nhs/typedoc-plugin-swagger/issues"
+    "url": "https://github.com/ahuggins-nhs/typedoc-plugin-openapi/issues"
   },
-  "homepage": "https://github.com/ahuggins-nhs/typedoc-plugin-swagger#readme",
+  "homepage": "https://github.com/ahuggins-nhs/typedoc-plugin-openapi#readme",
   "peerDependencies": {
     "typedoc": "^0.20.20"
   },

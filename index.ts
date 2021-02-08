@@ -7,31 +7,31 @@ import * as YAML from 'js-yaml'
 import { CommentTag } from 'typedoc/dist/lib/models/comments/tag'
 import { format } from './jsonTable'
 
-export interface SwaggerDocOpts {
-  /** Hoists the summary and description found in the swagger operation to the signature description. Defaults to true. */
+export interface OpenApiDocOpts {
+  /** Hoists the summary and description found in the swagger/openapi path or operation to the signature description. Defaults to true. */
   hoistDescription?: boolean
-  /** Render the swagger tag as a code block instead of additional tags. Defaults to false. */
+  /** Render the swagger/openapi tag as a code block instead of additional tags. Defaults to false. */
   renderYaml?: boolean
-  /** Rename the tag from 'swagger' to something else. Defaults to false; set to true to rename to 'openapi'. */
+  /** Rename the tag from 'swagger' or 'openapi' to something else. Defaults to true, enforcing 'openapi'; provide a different name or set to false to disable. */
   renameTag?: boolean | string
 }
 
-export interface SwaggerOperation {
+export interface OpenApiOperation {
   summary?: string
   description?: string
 }
 
-export interface SwaggerPath {
+export interface OpenApiPath {
   summary?: string
   description?: string
-  [operation: string]: SwaggerOperation | string
+  [operation: string]: OpenApiOperation | string
 }
 
-export const PLUGIN_NAME = 'swagger-doc'
-const DEFAULT_OPTIONS: SwaggerDocOpts = {
+export const PLUGIN_NAME = 'openapi-doc'
+const DEFAULT_OPTIONS: OpenApiDocOpts = {
   hoistDescription: true,
   renderYaml: false,
-  renameTag: false
+  renameTag: true
 }
 const SUPPORTED_METHODS = ['get', 'post', 'put', 'patch', 'delete', 'head', 'options', 'trace']
 
@@ -45,12 +45,12 @@ export function load (host: PluginHost): void {
     defaultValue: {},
     map: {}
   })
-  app.converter.addComponent(PLUGIN_NAME, new SwaggerDocPlugin(app.converter))
+  app.converter.addComponent(PLUGIN_NAME, new OpenApiDocPlugin(app.converter))
 }
 
 @Component({ name: PLUGIN_NAME })
-export class SwaggerDocPlugin extends ConverterComponent {
-  private options: SwaggerDocOpts
+export class OpenApiDocPlugin extends ConverterComponent {
+  private options: OpenApiDocOpts
 
   initialize (): void {
     this.listenTo(this.owner, {
@@ -75,30 +75,32 @@ export class SwaggerDocPlugin extends ConverterComponent {
   }
 
   private onSignature (context: Context, reflection: Reflection, node?: any): void {
-    const generatedComment = '<!-- Generated from @swagger --><br>'
+    const generatedComment = '<!-- Generated from @openapi --><br>'
     console.log('declaration')
 
     if (typeof reflection.comment !== 'undefined') {
-      if (reflection.comment.hasTag('swagger')) {
-        const swagger = reflection.comment.getTag('swagger')
+      if (reflection.comment.hasTag('swagger') || reflection.comment.hasTag('openapi')) {
+        const openApi = reflection.comment.hasTag('swagger')
+          ? reflection.comment.getTag('swagger')
+          : reflection.comment.getTag('openapi')
 
-        if (!swagger.text.startsWith(generatedComment)) {
-          // Gather data from swagger TAML comment.
-          const swaggerObj: any = YAML.load(swagger.text)
-          let swaggerPath: SwaggerPath = {}
-          let swaggerPathName: string = ''
-          const operations: Array<{ method: string, metadata: SwaggerOperation}> = []
+        if (!openApi.text.startsWith(generatedComment)) {
+          // Gather data from swagger YAML comment.
+          const openApiObj: any = YAML.load(openApi.text)
+          let openApiPath: OpenApiPath = {}
+          let openApiPathName: string = ''
+          const operations: Array<{ method: string, metadata: OpenApiOperation}> = []
 
-          for (const [key, value] of Object.entries(swaggerObj)) {
+          for (const [key, value] of Object.entries(openApiObj)) {
             if (typeof value === 'object') {
-              swaggerPath = value as any
-              swaggerPathName = key
+              openApiPath = value as any
+              openApiPathName = key
 
               break
             }
           }
 
-          for (const [key, value] of Object.entries(swaggerPath)) {
+          for (const [key, value] of Object.entries(openApiPath)) {
             if (SUPPORTED_METHODS.includes(key)) {
               operations.push({
                 method: key,
@@ -109,42 +111,42 @@ export class SwaggerDocPlugin extends ConverterComponent {
 
           // Perform actions from options.
           if (this.options.hoistDescription) {
-            const swaggerOp: SwaggerOperation = typeof operations[0] === 'undefined' ? {} : operations[0].metadata
+            const openApiOp: OpenApiOperation = typeof operations[0] === 'undefined' ? {} : operations[0].metadata
 
             switch (true) {
-              case 'summary' in swaggerPath:
-                reflection.comment.shortText = swaggerPath.summary
-              case 'description' in swaggerPath:
-                if (typeof swaggerPath.summary === 'undefined') {
-                  reflection.comment.shortText = swaggerPath.description
+              case 'summary' in openApiPath:
+                reflection.comment.shortText = openApiPath.summary
+              case 'description' in openApiPath:
+                if (typeof openApiPath.summary === 'undefined') {
+                  reflection.comment.shortText = openApiPath.description
                 } else {
-                  reflection.comment.text = swaggerPath.description
+                  reflection.comment.text = openApiPath.description
                 }
                 break
-              case 'summary' in swaggerOp:
-                reflection.comment.shortText = swaggerOp.summary
-              case 'description' in swaggerOp:
-                if (typeof swaggerOp.summary === 'undefined') {
-                  reflection.comment.shortText = swaggerOp.description
+              case 'summary' in openApiOp:
+                reflection.comment.shortText = openApiOp.summary
+              case 'description' in openApiOp:
+                if (typeof openApiOp.summary === 'undefined') {
+                  reflection.comment.shortText = openApiOp.description
                 } else {
-                  reflection.comment.text = swaggerOp.description
+                  reflection.comment.text = openApiOp.description
                 }
                 break
             }
           }
 
           if (typeof this.options.renameTag === 'string') {
-            swagger.tagName = this.options.renameTag
+            openApi.tagName = this.options.renameTag
           }
 
           if (this.options.renderYaml) {
-            swagger.text = `${generatedComment}<pre>${swagger.text}</pre>`
+            openApi.text = `${generatedComment}<pre>${openApi.text}</pre>`
           } else {
-            // reflection.comment.removeTags(swagger.tagName)
+            // reflection.comment.removeTags(openApi.tagName)
             const htmlDescription: string[] = [generatedComment]
             // const addHtmlPart = (name: string, html: string = '') => htmlDescription.push(`<div><h4>${name}<h4>${html}</div>`)
             htmlDescription.push('<div>')
-            // htmlDescription.push(`<div class="lead"><p>Endpoint: <code>${swaggerPathName}</code></p></div>`)
+            // htmlDescription.push(`<div class="lead"><p>Endpoint: <code>${openApiPathName}</code></p></div>`)
 
             for (const item of operations) {
               htmlDescription.push('<style>')
@@ -154,7 +156,7 @@ export class SwaggerDocPlugin extends ConverterComponent {
               htmlDescription.push(`input[type=checkbox]#toggle-${item.method}:checked ~ .control-${item.method}{max-height:unset;}`)
               htmlDescription.push('</style>')
               htmlDescription.push(`<label class="for-${item.method}" for="toggle-${item.method}">`)
-              htmlDescription.push(`<h3>${item.method.toUpperCase()} <code>${swaggerPathName}</code></h3>`)
+              htmlDescription.push(`<h3>${item.method.toUpperCase()} <code>${openApiPathName}</code></h3>`)
               htmlDescription.push('</label>')
               htmlDescription.push(`<input type="checkbox" id="toggle-${item.method}">`)
               htmlDescription.push(`<div class="control-${item.method}">`)
@@ -166,7 +168,7 @@ export class SwaggerDocPlugin extends ConverterComponent {
                 htmlDescription.push('</div>')
                 htmlDescription.push('</div>')
                 /* const tag: CommentTag = new CommentTag(
-                  swagger.tagName + ' ' + item.method.toUpperCase() + ' ' + key,
+                  openApi.tagName + ' ' + item.method.toUpperCase() + ' ' + key,
                   '',
                   typeof value === 'object' ? format(value) : value
                 )
@@ -178,8 +180,8 @@ export class SwaggerDocPlugin extends ConverterComponent {
 
             htmlDescription.push('</div>')
 
-            swagger.text = htmlDescription.join('')
-            console.log(swagger.text)
+            openApi.text = htmlDescription.join('')
+            console.log(openApi.text)
           }
         }
       }
