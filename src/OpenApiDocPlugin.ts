@@ -7,9 +7,17 @@ import * as YAML from 'js-yaml'
 import { format } from './jsonTable'
 import { DEFAULT_OPTIONS, PLUGIN_NAME, SUPPORTED_METHODS } from './constants'
 import { OpenApiDocOpts, OpenApiOperation, OpenApiOps, OpenApiPath } from './interfaces'
+import { DUMMY_APPLICATION_OWNER } from 'typedoc/dist/lib/utils/component'
 
 @Component({ name: PLUGIN_NAME })
 export class OpenApiDocPlugin extends ConverterComponent {
+  constructor (owner: Converter | typeof DUMMY_APPLICATION_OWNER) {
+    super(owner)
+
+    this.marked = new MarkedPlugin(this.application.renderer)
+    this.generatedComment = '<!-- Generated from @openapi --><br>'
+  }
+
   private generatedComment: string
   private options: Required<OpenApiDocOpts>
   private marked: MarkedPlugin
@@ -18,29 +26,32 @@ export class OpenApiDocPlugin extends ConverterComponent {
     this.listenTo(this.owner, {
       [Converter.EVENT_CREATE_SIGNATURE]: this.onSignature
     })
+  }
 
-    this.marked = new MarkedPlugin(this.application.renderer)
+  private ensureOptions () {
+    if (typeof this.options === 'undefined') {
+      try {
+        const userOptions: any = this.owner.application.options.getValue(PLUGIN_NAME)
 
-    this.generatedComment = '<!-- Generated from @openapi --><br>'
-
-    try {
-      const userOptions: any = this.owner.application.options.getValue(PLUGIN_NAME)
-      this.options = {
-        ...DEFAULT_OPTIONS,
-        ...userOptions
+        this.options = {
+          ...DEFAULT_OPTIONS,
+          ...userOptions
+        }
+      } catch (error) {
+        this.options = {
+          ...DEFAULT_OPTIONS
+        }
       }
-    } catch (error) {
-      this.options = {
-        ...DEFAULT_OPTIONS
+  
+      if (typeof this.options.renameTag === 'boolean' && this.options.renameTag) {
+        this.options.renameTag = 'openapi'
       }
-    }
-
-    if (typeof this.options.renameTag === 'boolean' && this.options.renameTag) {
-      this.options.renameTag = 'openapi'
     }
   }
 
   private onSignature (context: Context, reflection: Reflection): void {
+    this.ensureOptions()
+
     if (typeof reflection.comment !== 'undefined') {
       if (reflection.comment.hasTag('swagger') || reflection.comment.hasTag('openapi')) {
         const openApi = reflection.comment.hasTag('swagger')

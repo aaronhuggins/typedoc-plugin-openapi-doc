@@ -296,70 +296,15 @@ function _format (data: any, options: FormatterOptions, parentKey?: number | str
   return result
 }
 
-/** Validate options and create defaults. */
-function validateOptions (options: FormatterOptions): FormatterOptions {
-  // Validate or create showArrayIndex option.
-  options.showArrayIndex = typeof options.showArrayIndex === 'boolean' ? options.showArrayIndex : false
-
-  // Validate or create hyperlinks option.
-  if (typeof options.hyperlinks === 'object' && options.hyperlinks.enable) {
-    const hyperlinks = {
-      enable: true,
-      keys: Array.isArray(options.hyperlinks.keys) ? options.hyperlinks.keys : [],
-      target: typeof options.hyperlinks.target === 'string' ? options.hyperlinks.target : '_blank'
-    }
-
-    options.hyperlinks = hyperlinks
-  } else {
-    options.hyperlinks = {
+export function format (data: any): string {
+  const options: FormatterOptions = {
+    showArrayIndex: false,
+    hyperlinks: {
       enable: false,
-      // Keys was null at one point by default, may need to re-evaluate.
       keys: [],
       target: ''
-    }
-  }
-
-  // Validate or create options for booleans.
-  if (typeof options.bool === 'object' && options.bool !== null) {
-    const boolOptions = options.bool
-
-    // Show text if no option
-    if (!boolOptions.showText && !boolOptions.showImage) {
-      boolOptions.showImage = false
-      boolOptions.showText = true
-    }
-
-    if (boolOptions.showText) {
-      if (typeof boolOptions.text !== 'object') {
-        boolOptions.text = {
-          true: 'true',
-          false: 'false'
-        }
-      } else {
-        const t = boolOptions.text.true
-        const f = boolOptions.text.false
-
-        if (getType(t) !== STRING || t === '') {
-          boolOptions.text.true = 'true'
-        }
-
-        if (getType(f) !== STRING || f === '') {
-          boolOptions.text.false = 'false'
-        }
-      }
-    }
-
-    if (
-      boolOptions.showImage &&
-      (
-        typeof boolOptions.text !== 'object' ||
-        (typeof boolOptions.img.true !== 'string' && typeof boolOptions.img.false !== 'string')
-      )
-    ) {
-      boolOptions.showImage = false
-    }
-  } else {
-    options.bool = {
+    },
+    bool: {
       text: {
         true: 'true',
         false: 'false'
@@ -372,12 +317,7 @@ function validateOptions (options: FormatterOptions): FormatterOptions {
       showText: true
     }
   }
-
-  return options
-}
-
-export function format (data: any, options: FormatterOptions = {}): string {
-  const result = _format(data, validateOptions(options))
+  const result = _format(data, options)
   result.className = result.className + ' ' + prefixer('root')
 
   return result.outerHTML
